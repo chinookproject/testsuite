@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chinook Unit Test</title>
+        <link href="WebUnitTestLoggerViews/css/bootstrap.css" rel="stylesheet">
+        <script type="text/javascript" src="WebUnitTestLoggerViews/js/jquery-2.0.3.min.js"></script>
+        
+        <script>
+            function setHeaderClass ( id, result )
+            {
+                if ( result )
+                    document.getElementById("header_"+id).setAttribute("class", "alert alert-success");
+                else
+                    document.getElementById("header_"+id).setAttribute("class", "alert alert-danger");
+            }
+            
+            $(function() {
+                $('.testcases').on('change', function() {
+                    $('.testmethods option:selected').prop("selected", false);
+                    
+                    var selectedCase = $(this).val();
+                    
+                    $('select.testmethods').hide();
+                    $('select.testmethods[data-case="'+selectedCase+'"]').show();
+                });
+            });
+        </script>
+    </head>
+    
+    <body>
+        <div class="container">
+            <?php foreach ( CFWebRunner::$Errors as $error ): ?>
+            
+            <div class="alert alert-danger" style="margin:0;">
+                <?= $error->ErrorMessage; ?>
+            </div>
+            <? endforeach; ?>
+        </div>
+        <div class="container">
+            <form method="POST" action="<?= $_SERVER['REQUEST_URI']; ?>">
+                <div class="row" style="margin: 10px 0px;">
+                    <div class="col-lg-3">
+                        <select name="testcases[]" class="testcases" multiple="multiple" style="width:100%; height:130px;">
+                            <?php foreach ( $this->Cases as $case ): ?>
+                            <option value="<?= $case->TestCasePath; ?>"><?= basename($case->TestCasePath); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-lg-9">
+                        <?php foreach ( $this->Cases as $case ): ?>
+                        <select name="testmethods[<?= $case->TestCasePath; ?>][]" class="testmethods" multiple="multiple" style="width:100%; height:130px; display:none;" data-case="<?= $case->TestCasePath; ?>">
+                            <?php foreach ( $case->TestMethods as $testMethod ): ?>
+                                <option><?= $testMethod; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="row" style="margin: 10px 0px;">
+                    <code>Please note that when Test Methods are selected, that only those methods will be run. Regardless of how many test cases you have selected.</code>
+                    <code>When NOTHING is selected, then all tests are run!</code>
+                </div>
+                <div class="row" style="padding-left: 10px;">
+                    <button class="btn btn-primary">Run Test(s)</button>
+                </div>
+            </form>
+        </div>
+        <div class="container" style="margin-bottom: 30px;">
+        <?php 
+            $previousMethod = '';
+        ?>
+        <?php foreach ( $this->testCasseResults as $testCaseIndex => $results ): ?>
+            <?php $headerResult = true; ?>
+            <div id="header_<?= $testCaseIndex; ?>" style="margin-top:20px;">
+                <span style="font-size:20px; font-weight:bold;"><?= reset($results)->TestCase; ?></span><br />
+                Ran <?= count($results) ?> assertions of which <?= $this->getSucceededResultCount ( $results ); ?> assertions succeeded
+            </div>
+            
+            <?php foreach ( $results as $index => $result ): ?>                
+                <?php if ( $previousMethod !== $result->TestMethod ): ?>
+                    <?php if($index !== 0) echo '<hr />'; ?>
+                    
+                    <span style="font-weight: bold;"><?=$result->TestMethod; ?></span><br />
+                    <?php $previousMethod = $result->TestMethod; ?>
+                <?php endif; ?>
+                
+                <?php if ( $result->Result ): ?>
+                    <span class="label label-success">Succeeded</span>
+                <?php else: ?>
+                    <?php $headerResult = false; ?>
+                    <span class="label label-danger">Failed</span>
+                <?php endif; ?>
+                
+                <span style="color:<?= $color; ?>;"> <?= implode ( '->', $result->MethodChain ); ?></span>&nbsp;
+                <span style="font-style:italic; color: red;"><?= $result->Message; ?></span><br />
+            <?php endforeach; ?>
+            
+            <script>
+                setHeaderClass ( '<?= $testCaseIndex; ?>', <?= $headerResult ? 1 : 0; ?> );
+            </script>
+        <? endforeach; ?>
+        </div>
+    </body>
+
+</html>

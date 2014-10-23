@@ -1,0 +1,15 @@
+{
+    "name": "chinook/testsuite",
+    "description": "Simple unit test and mocking framework",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Chinook\\TestSuite\\": "/",
+            "Chinook\\TestSuite\\Mock\\": "Mock/",
+            "Chinook\\TestSuite\\Unit\\": "Unit/"
+        }
+    },
+    "require": {
+
+    }
+}
