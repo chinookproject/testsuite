@@ -1,8 +1,8 @@
 <?php
 namespace Chinook\TestSuite\Unit;
 
-ini_set('display_errors', '1');
-error_reporting(E_ALL | E_STRICT);
+require_once ( __DIR__ . '/../../UnitTestCase.php' );
+require_once ( __DIR__ . '/../../UnitTestInvoker.php' );
 
 class WebRunner extends UnitTestInvoker
 {
@@ -54,7 +54,7 @@ class WebRunner extends UnitTestInvoker
         $successCount = 0;
         foreach ( $testCaseResults as $result )
         {
-            if ( $result->Result === true )
+            if ( $result->result === true )
             {
                 $successCount++;
             }

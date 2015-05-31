@@ -1,6 +1,8 @@
 <?php
 namespace Chinook\TestSuite\Unit;
-//require_once ( realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'CFUnitTestConfig.php' );
+
+require_once ( __DIR__ . '/../Config.php' );
+require_once ( __DIR__ . '/TestCaseMethods.php' );
 
 use Chinook\TestSuite\Config;
 use Chinook\TestSuite\Bootstrap;
@@ -13,11 +15,14 @@ class UnitTestInvoker
     
     public function __construct ( )
     {
-        $bootstrap = new Bootstrap();
-        $bootstrap->init();
-
-        //$this->rootFolder =  realpath(dirname(__FILE__)) . '/../../' . trim(CFUnitTestConfig::$TestFolder, '/');
-        $this->rootFolder = Config::$testFolders[0];
+        if (php_sapi_name() != "cli")
+		{
+			$this->rootFolder = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . Config::$testFolders[0];
+		}
+		else
+		{
+			$this->rootFolder = Config::$testFolders[0];
+		}
     }
     
     /**

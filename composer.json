@@ -2,14 +2,12 @@
     "name": "chinook/testsuite",
     "description": "Simple unit test and mocking framework",
     "license": "MIT",
+    "require": {
+        "php": ">=5.4.0"
+    },
     "autoload": {
         "psr-4": {
-            "Chinook\\TestSuite\\": "/",
-            "Chinook\\TestSuite\\Mock\\": "Mock/",
-            "Chinook\\TestSuite\\Unit\\": "Unit/"
+            "Chinook\\TestSuite\\": "/"
         }
-    },
-    "require": {
-
     }
 }
